@@ -20,26 +20,19 @@ export class Home extends Component {
   _onChange(e){
     this.setState({q :e.target.value})
   }
-  getData(){
-    getApi(GitUserUrl,{ q : this.state.q, page : this.state.page, per_page: 10 }, (result) => {
+  getData(query={ q : this.state.q, page : this.state.page, per_page: 10 }){
+    console.log(query)
+    getApi(GitUserUrl,query,(result) => {
       if(result){
-        this.setState({items:result.items, total_count: result.total_count})
+        this.setState({items:result.items, total_count: result.total_count, page: query.page})
       }
     })
   }
   previousPage(){
-      getApi(GitUserUrl,{ q : this.state.q, page : this.state.page - 1, per_page: 10 }, (result) => {
-        if(result){
-          this.setState({items:result.items, total_count: result.total_count,page : this.state.page + 1 })
-        }
-      })
+      this.getData({ q : this.state.q, page : this.state.page - 1, per_page: 10 })
   }
   NextPage(){
-    getApi(GitUserUrl,{ q : this.state.q, page : this.state.page + 1, per_page: 10 }, (result) => {
-      if(result){
-        this.setState({items:result.items, total_count: result.total_count, page : this.state.page + 1 })
-      }
-    })
+    this.getData({ q : this.state.q, page : this.state.page + 1, per_page: 10 })
   }
   displayUsers(){
     return this.state.items.map( elem => {
@@ -60,9 +53,11 @@ export class Home extends Component {
       <div>
           Search Git User
           <input value={this.state.q} onChange={this._onChange}/>
-          <button onClick={this.getData}>Search</button>
+          <button onClick={e => this.getData()}>Search</button>
         <table>
+        <tbody>
         {this.displayUsers()}
+        </tbody>
         </table>
         {this.state.page > 1 ? <button onClick={this.previousPage}>Previous Page</button> : null }
         {this.state.page * 10 < this.state.total_count ?
