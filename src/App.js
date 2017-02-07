@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { getApi, GitUserUrl} from './commons'
+import { getApi, GitUsersUrl, GitUserUrl} from './commons'
+import { Link } from 'react-router'
 export class Home extends Component {
   constructor(props){
   	super(props);
@@ -22,7 +23,7 @@ export class Home extends Component {
   }
   getData(query={ q : this.state.q, page : this.state.page, per_page: 10 }){
     console.log(query)
-    getApi(GitUserUrl,query,(result) => {
+    getApi(GitUsersUrl,query,(result) => {
       if(result){
         this.setState({items:result.items, total_count: result.total_count, page: query.page})
       }
@@ -39,7 +40,9 @@ export class Home extends Component {
       return (
         <tr key={elem.id}>
           <td>
+          <Link to={"/user/" + elem.login} >
             {elem.login}
+          </Link>
           </td>
           <td>
           <img src={elem.avatar_url} role="presentation" width="150px" height="150px"/>
@@ -49,15 +52,23 @@ export class Home extends Component {
     })
   }
   render() {
+    if(this.props.children){
+      console.log(this.props.children)
+      return this.props.children
+    }
     return (
       <div>
           Search Git User
           <input value={this.state.q} onChange={this._onChange}/>
           <button onClick={e => this.getData()}>Search</button>
         <table>
-        <tbody>
-        {this.displayUsers()}
-        </tbody>
+          <thead>
+            <th>Name</th>
+            <th>Image</th>
+          </thead>
+          <tbody>
+          {this.displayUsers()}
+          </tbody>
         </table>
         {this.state.page > 1 ? <button onClick={this.previousPage}>Previous Page</button> : null }
         {this.state.page * 10 < this.state.total_count ?
@@ -68,11 +79,20 @@ export class Home extends Component {
   }
 }
 export class User extends Component {
-
+  constructor(props){
+  	super(props);
+  	this.state = {};
+  }
+  getData(){
+    getApi(GitUserUrl+this.props.routeParams.user,{},result => {
+      this.setState(result)
+    })
+  }
     render() {
         return (
             <div className="class-name">
                 Hello
+                <code>{this.state}</code>
             </div>
         );
     }
