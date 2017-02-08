@@ -40,7 +40,7 @@ export class Home extends Component {
       return (
         <tr key={elem.id}>
           <td>
-          <Link to={"/user/" + elem.login} >
+          <Link to={"/user/" + elem.login}>
             {elem.login}
           </Link>
           </td>
@@ -53,7 +53,6 @@ export class Home extends Component {
   }
   render() {
     if(this.props.children){
-      console.log(this.props.children)
       return this.props.children
     }
     return (
@@ -70,10 +69,11 @@ export class Home extends Component {
           {this.displayUsers()}
           </tbody>
         </table>
-        {this.state.page > 1 ? <button onClick={this.previousPage}>Previous Page</button> : null }
-        {this.state.page * 10 < this.state.total_count ?
-          <button onClick={this.NextPage}>Next Page</button>
-        : null }
+
+      {this.state.page > 1 ? <button onClick={this.previousPage}>Previous Page</button> : null }
+      {this.state.page * 10 < this.state.total_count ?
+        <button onClick={this.NextPage}>Next Page</button>
+      : null }
       </div>
     );
   }
@@ -81,18 +81,36 @@ export class Home extends Component {
 export class User extends Component {
   constructor(props){
   	super(props);
-  	this.state = {};
+    this.displayUser = this.displayUser.bind(this)
+    this.getData = this.getData.bind(this)
+  	this.state = {
+
+    };
   }
   getData(){
     getApi(GitUserUrl+this.props.routeParams.user,{},result => {
       this.setState(result)
     })
   }
+  componentWillMount() {
+    this.getData()
+  }
+  displayUser(){
+    let content = []
+    for (var elem in this.state){
+      content.push(
+        <li key={elem}>
+          {this.state[elem]}
+        </li>
+      )
+    }
+    return content
+  }
     render() {
         return (
             <div className="class-name">
                 Hello
-                <code>{this.state}</code>
+                {this.displayUser()}
             </div>
         );
     }
