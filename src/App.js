@@ -40,7 +40,7 @@ export class Home extends Component {
       return (
         <tr key={elem.id}>
           <td>
-          <Link to={"/user/" + elem.login}>
+          <Link to={"/user/" + elem.id}>
             {elem.login}
           </Link>
           </td>
@@ -98,19 +98,47 @@ export class User extends Component {
   displayUser(){
     let content = []
     for (var elem in this.state){
-      content.push(
-        <li key={elem}>
-          {this.state[elem]}
-        </li>
-      )
+        console.log(elem)
+        if(elem == "login"){
+          content.push(
+            <Link to={this.state.html_user}>{this.state.name}</Link>
+          )
+        }
     }
-    return content
+    return (<div>{content}</div>)
   }
     render() {
         return (
             <div className="class-name">
-                Hello
-                {this.displayUser()}
+              {this.state.login ?
+                <Link to={this.state.html_user}>{this.state.name}</Link>
+              : null }
+              {this.state.avatar_url ?
+              <img src={this.state.avatar_url} role="presentation" width="150px" height="150px"/> : null }
+              {
+                this.state.bio ?
+                <p>{this.state.bio}</p> : null
+              }
+              {
+                this.state.blog ?
+                <a href={this.state.blog}>Blog</a> : null
+              }
+              {
+                this.state.public_repos ?
+                <p> Public Repos : {this.state.public_repos} </p>: null
+              }
+              {
+                this.state.public_gists ?
+                <p> Public Gists : {this.state.public_gists} </p>: null
+              }
+              {
+                this.state.followers ?
+                <p> Followers : {this.state.followers} </p>: null
+              }
+              {
+                this.state.following ?
+                <p> Following : {this.state.following} </p>: null
+              }
             </div>
         );
     }
